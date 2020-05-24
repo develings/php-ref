@@ -469,7 +469,7 @@ class ref{
       // expecting 3 components on the 'param' tag: type varName varDescription
       if($tag === 'param'){
         $lastIdx = 2;
-        if(in_array($parts[1][0], array('&', '$'), true)){
+          if($parts[1] && in_array($parts[1][0], array('&', '$'), true)){
           $line     = ltrim(array_pop($parts));
           $parts    = array_merge($parts, explode(' ', $line, 2));        
           $parts[2] = isset($parts[2]) ? ltrim($parts[2]) : null;
@@ -2017,7 +2017,7 @@ class ref{
             $hasType = static::$env['is7'] && $parameter->hasType();
             if($hasType){
               $type = $parameter->getType();
-              $this->fmt->text('hint', (string)$type);
+              $this->fmt->text('hint', $this->getTypeAsString($type));
               $this->fmt->sep(' ');
             }
           }
@@ -2057,7 +2057,7 @@ class ref{
           $type = $method->getReturnType();
           $this->fmt->startContain('ret');
           $this->fmt->sep(':');
-          $this->fmt->text('hint', (string)$type);
+          $this->fmt->text('hint', $this->getTypeAsString($type));
           $this->fmt->endContain();
         }
 
@@ -2069,6 +2069,16 @@ class ref{
     $this->fmt->endGroup();
 
     $this->fmt->cacheLock($hash);
+  }
+    
+    /**
+     * @param $type
+     *
+     * @return string
+     */
+  protected function getTypeAsString($type)
+  {
+      return $type instanceof ReflectionType ? $type->getName() : (string) $type;
   }
 
 
